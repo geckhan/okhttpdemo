@@ -3,6 +3,7 @@ package cn.geckhan.okhttpdemo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -21,28 +22,42 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Request mRquest = new Request.Builder().url("http://121.41.119.107:81/test/1.doc").build();
-        try {
-            downloading(client, mRquest, new IProgressListener() {
-                @Override
-                public void onStart(long contentLength) {
-                    MtLog.LogV("需要下载的文件长度"+contentLength);
-                }
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTask.execute();
+            }
+        });
 
-                @Override
-                public void onProgress(long currentLength) {
-                    MtLog.LogV("当前进度"+currentLength);
-                }
 
-                @Override
-                public void onSuccess(String filePath) {
-                    MtLog.LogV("下载成功，文件地址"+filePath);
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
+    AsyncTask<Void,Void,Void> mTask = new AsyncTask<Void, Void, Void>() {
+        @Override
+        protected Void doInBackground(Void... params) {
+            Request mRquest = new Request.Builder().url("http://121.41.119.107:81/test/1.doc").build();
+            try {
+                downloading(client, mRquest, new IProgressListener() {
+                    @Override
+                    public void onStart(long contentLength) {
+                        MtLog.LogV("需要下载的文件长度"+contentLength);
+                    }
+
+                    @Override
+                    public void onProgress(long currentLength) {
+                        MtLog.LogV("当前进度"+currentLength);
+                    }
+
+                    @Override
+                    public void onSuccess(String filePath) {
+                        MtLog.LogV("下载成功，文件地址"+filePath);
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    };
 
     private void downloading(final OkHttpClient client, final Request request, IProgressListener listener) throws IOException {
         Response response = client.newCall(request).execute();
