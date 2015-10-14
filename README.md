@@ -48,8 +48,10 @@ private void downloading(final OkHttpClient client, final Request request, IProg
     }
 
 
-
 ```
+
+如果上传的请使用 大神写的 [CoreProgess](https://github.com/lizhangqu/CoreProgress)，膜拜过，但在这里有个bug:sink 中获取的byteCount然后传出，这里bytecount 是 byte数组的size 是固定死的，但在io时，每次读出来的count是小于 byte数组的size的 。我也给大神fork过了。
+
 
 
 
